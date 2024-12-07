@@ -18,7 +18,7 @@ class RepoSearchApp:
         os.makedirs(repos_dir, exist_ok=True)
         
         # Initialize database connection
-        self.conn = sqlite3.connect(db_path)
+        self.conn = sqlite3.connect(db_path, check_same_thread=False)
         self.cursor = self.conn.cursor()
         
         # Create tables with FTS5 support
@@ -182,8 +182,8 @@ def setup_initial_repos():
     Initial setup to clone and index repositories
     """
     repos_to_index = [
-        'https://github.com/username/repo1.git',
-        'https://github.com/username/repo2.git'
+        'https://github.com/runarhageland/strompris.git',
+        'https://github.com/runarhageland/k8slab.git'
     ]
     
     # Clone and index repositories
@@ -192,6 +192,7 @@ def setup_initial_repos():
 if __name__ == '__main__':
     # Setup initial repositories before starting the app
     setup_initial_repos()
+    print(os.environ['FLASK_RUN_HOST'])
     
     # Run the Flask app
-    app.run(debug=True)
+    app.run(host=(os.environ['FLASK_RUN_HOST']), port=(os.environ['FLASK_RUN_PORT']), debug=(os.environ['DEBUG']))

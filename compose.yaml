@@ -1,0 +1,12 @@
+services:
+  codeSearchWeb:
+    image: local/codesearchweb:0.1
+    build: .
+    ports:
+      - "8080:8080"
+    #volumes:
+    #  - ./app:/app
+    environment:
+      FLASK_RUN_HOST: "0.0.0.0"
+      FLASK_RUN_PORT: "8080"
+      DEBUG: "True"
