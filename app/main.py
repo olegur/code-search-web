@@ -184,10 +184,10 @@ def setup_initial_repos():
     """
     Initial setup to clone and index repositories
     """
-    repos_to_index = [
-        'https://github.com/runarhageland/strompris.git',
-        'https://github.com/runarhageland/k8slab.git'
-    ]
+    with open((os.environ['GIT_REPO_LIST'])) as file:
+        lines = file.read().splitlines()
+
+    repos_to_index = lines
     
     # Clone and index repositories
     repo_search.index_repositories(repos_to_index)

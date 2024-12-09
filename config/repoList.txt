@@ -1,0 +1,3 @@
+https://github.com/runarhageland/strompris.git
+https://github.com/runarhageland/k8slab.git
+https://github.com/torvalds/linux.git
