@@ -24,6 +24,7 @@ class RepoSearchApp:
         # Create tables with FTS5 support
         self.cursor.execute('''
             CREATE VIRTUAL TABLE IF NOT EXISTS file_contents USING fts5(
+                repo_link,
                 repo_name, 
                 filepath, 
                 filename, 
@@ -63,7 +64,8 @@ class RepoSearchApp:
         
         :param repo_name: Name of the repository to index
         """
-        repo_path = os.path.join(self.repos_dir, repo_name)
+        repo_path   = os.path.join(self.repos_dir, repo_name)
+        repo_link   = ((subprocess.check_output(['git','-C',repo_path,'remote','-v'])).split()[1]).decode('UTF-8')
         
         # Walk through all files in the repository
         for root, _, files in os.walk(repo_path):
@@ -94,9 +96,10 @@ class RepoSearchApp:
                     # Insert file content into FTS table
                     self.cursor.execute('''
                         INSERT INTO file_contents 
-                        (repo_name, filepath, filename, content, last_modified) 
-                        VALUES (?, ?, ?, ?, ?)
+                        (repo_link, repo_name, filepath, filename, content, last_modified) 
+                        VALUES (?, ?, ?, ?, ?, ?)
                     ''', (
+                        repo_link,
                         repo_name, 
                         relative_path, 
                         filename, 
@@ -133,7 +136,7 @@ class RepoSearchApp:
         :return: List of matching files
         """
         self.cursor.execute('''
-            SELECT repo_name, filepath, filename, 
+            SELECT repo_link, repo_name, filepath, filename, 
                    snippet(file_contents, 0, '...', '...', '...', 50) as preview
             FROM file_contents
             WHERE file_contents MATCH ?
